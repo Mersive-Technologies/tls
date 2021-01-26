@@ -1,4 +1,7 @@
-/target
+target/
 **/*.rs.bk
-Cargo.lock
 .DS_Store
+.idea/
+*.ipr
+*.iml
+*.iws

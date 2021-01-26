@@ -64,3 +64,22 @@ This project is licensed under the [MIT license](LICENSE).
 Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in Tokio by you, shall be licensed as MIT, without any additional
 terms or conditions.
+                                 
+### dev setup
+                                                  
+Generate keys:
+
+```shell
+openssl req -x509 -newkey rsa:4096 -keyout key1.pem -out cert1.pem -days 365
+openssl rsa -in key1.pem -out unencrypted_key1.pem
+```
+
+Run server:
+```shell
+cargo run --package server --bin server -- 0.0.0.0:8000 --cert /home/bgardner/cert1.pem --key /home/bgardner/ukey1.pem
+```
+
+Run client:
+```shell
+cargo run --package client --bin client -- localhost --port 8000
+```

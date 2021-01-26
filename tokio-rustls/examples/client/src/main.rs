@@ -29,6 +29,25 @@ struct Options {
     cafile: Option<PathBuf>,
 }
 
+mod danger {
+    use tokio_rustls::{rustls, webpki};
+    use rustls::{ServerCertVerifier, ServerCertVerified};
+
+    pub struct NoCertificateVerification {}
+
+    impl ServerCertVerifier for NoCertificateVerification {
+        fn verify_server_cert(
+            &self,
+            _roots: &rustls::RootCertStore,
+            _presented_certs: &[rustls::Certificate],
+            _dns_name: webpki::DNSNameRef<'_>,
+            _ocsp: &[u8],
+        ) -> Result<ServerCertVerified, rustls::TLSError> {
+            Ok(ServerCertVerified::assertion())
+        }
+    }
+}
+
 #[tokio::main]
 async fn main() -> io::Result<()> {
     let options: Options = argh::from_env();
@@ -41,6 +60,8 @@ async fn main() -> io::Result<()> {
     let content = format!("GET / HTTP/1.0\r\nHost: {}\r\n\r\n", domain);
 
     let mut config = ClientConfig::new();
+    config.dangerous()
+        .set_certificate_verifier(Arc::new(danger::NoCertificateVerification {}));
     if let Some(cafile) = &options.cafile {
         let mut pem = BufReader::new(File::open(cafile)?);
         config

@@ -7,4 +7,5 @@ edition = "2018"
 [dependencies]
 tokio = { version = "1.0", features = [ "full" ] }
 argh = "0.1"
-tokio-rustls = { path = "../.." }
+rustls = { version = "0.19", features= [ "dangerous_configuration"]  }
+tokio-rustls = { path = "../..", features= [ "dangerous_configuration"] }
